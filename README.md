@@ -1,8 +1,6 @@
-# SaaSComps
-
 # Description
 
-## Understanding the impact of growth rates and margin on B2B SaaS valuations
+## Understanding the impact of growth rates and Gross margin on B2B SaaS valuations
 
 **TL;DR**
     
@@ -22,10 +20,9 @@ For high-growth B2B SaaS companies:
 
 ## Info:
 
-Author: ramu@acapital.com
-
-Last updated: 05/09/21
-
-Dataset: Revenue data for 66 SaaS Companies from a few quarters before IPO to May 2021
+Dataset: 30 High growth B2B SaaS companies
+Author: Ramu Arunachalam (ramu@acapital.com)
+Created: 06/09/21
+Datset last updated: 06/08/21
 
 
