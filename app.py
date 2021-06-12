@@ -14,11 +14,12 @@ import statsmodels.api as sm
 import streamlit as st
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
-latest_filename_all = '2021-06-11-comps_B2B_ALL.csv'
-latest_filename_high_growth = '2021-06-11-comps_B2B_High_Growth.csv'
+file_date = '2021-06-11'
+saas_filename_all = f'{file_date}-comps_B2B_ALL.csv'
+saas_filename_high_growth = f'{file_date}-comps_B2B_High_Growth.csv'
 
 
-def load_dataset(f_all=latest_filename_all, f_hg=latest_filename_high_growth):
+def load_dataset(f_all=saas_filename_all, f_hg=saas_filename_high_growth):
     df_main = pd.read_csv(f_all)
     df_main_hg = pd.read_csv(f_hg)
     tickers_all = list(df_main[df_main['Name'].isin(['Median', 'Mean']) == False]['Name'])
@@ -45,7 +46,6 @@ def load_dataset(f_all=latest_filename_all, f_hg=latest_filename_high_growth):
             df_main[c] = pd.to_numeric(df_main[c])
         except:
             pass
-
     return df_main
 
 
@@ -176,10 +176,8 @@ def main():
     df = df_main
     df[growth_adj_mult] = df[rev_mult] / df[rev_g]
 
-    y_sel = st.sidebar.radio("Target metric", [rev_mult, gp_mult, growth_adj_mult])
-
     st.title('**Impact of Growth and Margins on Valuation**')
-    st.info(f'Num companies = {len(df)}')
+
     """
     **TL;DR**
     
@@ -197,14 +195,14 @@ def main():
     plot_container = st.beta_container()
 
     ## Regression
-    st.sidebar.info("Regression:")
+    st.sidebar.write("**Regression:**")
     st.subheader("Regression")
+    y_sel = st.sidebar.radio("Target metric", [rev_mult, gp_mult, growth_adj_mult])
     st.sidebar.text("Select independent variable(s)")
-
     reg_x_dict = dict({rev_g: True, gm: True})  # Default ON
     # Check if user selected revenue growth and/or gross margin
     reg_x_cols = [i for i in [rev_g, gm] if st.sidebar.checkbox(i, value=reg_x_dict.get(i, False), key=i)]
-    remaining_cols = list(set(df.select_dtypes(['float', 'int']).columns) - set(reg_x_cols))
+    remaining_cols = list(set(df.select_dtypes(['float', 'int']).columns) - set([rev_g,gm]))
     reg_x_cols += st.sidebar.multiselect("Additional independent variables:", remaining_cols)
     regression(df, x_cols=reg_x_cols, reg_y=y_sel)
 
@@ -221,7 +219,8 @@ def main():
                .set_index('Name')
                .sort_values(y_sel, ascending=False))
     st.beta_expander('Full Raw Table Output').table(df_main)
-
+    st.sidebar.info(f"""*{len(df_main)} companies selected*    
+    *Prices as of {file_date}*""")
     return
 
 
