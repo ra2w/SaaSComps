@@ -28,15 +28,21 @@ def load_dataset(f_all=saas_filename_all, f_hg=saas_filename_high_growth):
     tickers_hg = list(df_main_hg[df_main_hg['Name'].isin(['Median', 'Mean']) == False]['Name'])
     tickers_excl_hg = list(set(tickers_all) - set(tickers_hg))
 
-    sel = st.sidebar.radio("B2B SaaS Dataset", ['All', 'Only High Growth', 'Exclude High Growth'])
+    sel = st.sidebar.radio("B2B SaaS Dataset", ['Only High Growth','All','Exclude High Growth'])
     if sel == 'Only High Growth':
+        tickers = tickers_hg
         df_main = df_main[df_main['Name'].isin(tickers_hg)]
     elif sel == 'Exclude High Growth':
+        tickers = tickers_excl_hg
         df_main = df_main[df_main['Name'].isin(tickers_excl_hg)]
+    else:
+        tickers = tickers_all
+
+    df_main = df_main[df_main['Name'].isin(tickers)]
 
     # Cleanze
-    df_obj = df_main.select_dtypes(['object'])
-    df_main[df_obj.columns] = df_obj \
+    df_obj = df_main[set(df_main.columns) - {'Name'}].select_dtypes(['object'])
+    df_main[df_obj.columns] = df_obj\
         .apply(lambda x: x.str.strip('x')) \
         .apply(lambda x: x.str.strip('%')) \
         .replace(',', '', regex=True) \
