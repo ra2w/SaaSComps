@@ -12,6 +12,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import statsmodels.api as sm
 import streamlit as st
+import streamlit.components.v1 as components
+
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 file_date = '2021-06-11'
@@ -26,7 +28,7 @@ def load_dataset(f_all=saas_filename_all, f_hg=saas_filename_high_growth):
     tickers_hg = list(df_main_hg[df_main_hg['Name'].isin(['Median', 'Mean']) == False]['Name'])
     tickers_excl_hg = list(set(tickers_all) - set(tickers_hg))
 
-    sel = st.sidebar.radio("Dataset", ['All B2B SaaS', 'Only High Growth', 'Exclude High Growth'])
+    sel = st.sidebar.radio("B2B SaaS Dataset", ['All', 'Only High Growth', 'Exclude High Growth'])
     if sel == 'Only High Growth':
         df_main = df_main[df_main['Name'].isin(tickers_hg)]
     elif sel == 'Exclude High Growth':
@@ -113,7 +115,7 @@ def regression(df_input, x_cols, reg_y):
         color = 'green' if val['p-value'] <= 0.05 else 'red'
         return [f"color: {color}"] * len(val)
 
-    st.write("** Summary: **")
+    st.subheader("Summary:",anchor='summary')
     st.write(f"* N = {len(df_r)} companies")
 
     if model.rsquared * 100 > 30:
@@ -176,13 +178,15 @@ def main():
     df = df_main
     df[growth_adj_mult] = df[rev_mult] / df[rev_g]
 
-    st.title('**Impact of Growth and Margins on Valuation**')
+    st.title('Impact of Growth and Margins on Valuation')
 
+
+    #st.markdown("""**Growth drives revenue multiples** <h1 id="summary">Abc Def</h1>""",unsafe_allow_html=True)
     """
     **TL;DR**
     
     For high-growth B2B SaaS companies:
-    * **Growth drives revenue multiples**
+    * **Growth drives revenue multiples** ({: #summary })
         * Higher growth &#8594 Premium revenue multiples
         * Lower growth &#8594 Discounted revenue multiples
         
@@ -196,7 +200,7 @@ def main():
 
     ## Regression
     st.sidebar.write("**Regression:**")
-    st.subheader("Regression")
+    st.header("Regression")
     y_sel = st.sidebar.radio("Target metric", [rev_mult, gp_mult, growth_adj_mult])
     st.sidebar.text("Select independent variable(s)")
     reg_x_dict = dict({rev_g: True, gm: True})  # Default ON
@@ -208,7 +212,7 @@ def main():
 
     with plot_container:
         ## Plots
-        st.subheader("**Plots**")
+        st.header("Plots")
         for _, x in zip(range(4), reg_x_cols):
             st.plotly_chart(get_scatter_fig(df, x=x, y=y_sel))
         st.plotly_chart(get_scatter_fig(df, x=gm, y=rev_g))
