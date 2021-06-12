@@ -163,6 +163,7 @@ def regression(df_input, x_cols, reg_y):
 
 
 def main():
+    st.set_page_config(initial_sidebar_state="collapsed")
     df_main = load_dataset()
     df_main = augment_datset(df_main)
 
@@ -182,8 +183,8 @@ def main():
 
 
     #st.markdown("""**Growth drives revenue multiples** <h1 id="summary">Abc Def</h1>""",unsafe_allow_html=True)
+    st.header("TL;DR")
     """
-    **TL;DR**
     
     For high-growth B2B SaaS companies:
     * **Growth drives revenue multiples** ({: #summary })
@@ -230,3 +231,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
