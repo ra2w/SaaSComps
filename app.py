@@ -190,12 +190,12 @@ def main():
     st.markdown("""
     
     For high-growth B2B SaaS companies:
-    * [Revenue growth drives revenue multiples](#summary)
+    * [Revenue growth drives revenue multiples](#regression)
         * Higher growth &#8594 Premium revenue multiples
         * Lower growth &#8594 Discounted revenue multiples
         
     
-    * [Gross Margin doesn't impact valuation](#summary)
+    * [Gross Margin doesn't impact valuation](#regression)
         * Companies with higher gross margins don't command higher revenue multiples
         * And conversely, lower gross margins don't seem to pull down revenue multiples
     """,unsafe_allow_html=True)
