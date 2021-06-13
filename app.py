@@ -108,11 +108,9 @@ def regression(df_input, x_cols, reg_y):
     model = sm.OLS(df_r[reg_y], X).fit()
 
     #### Print p-values
-    df_pvalues = model.pvalues \
-        .to_frame() \
-        .reset_index() \
-        .rename(columns={'index': 'vars', 0: 'p-value'})
-    df_pvalues['Beta'] = model.params.to_frame().reset_index().rename(columns={0: 'Beta'})['Beta']
+
+    df_pvalues = model.params.to_frame().reset_index().rename(columns={'index': 'vars',0: 'Beta'})
+    df_pvalues['p-value'] = model.pvalues.to_frame().reset_index().rename(columns={0: 'p-value'})['p-value']
     df_pvalues['Statistical Significance'] = 'Low'
     df_pvalues.loc[df_pvalues['p-value'] <= 0.05, 'Statistical Significance'] = 'High'
     df_pvalues = df_pvalues[df_pvalues['vars'] != 'const']
@@ -121,7 +119,7 @@ def regression(df_input, x_cols, reg_y):
         color = 'green' if val['p-value'] <= 0.05 else 'red'
         return [f"color: {color}"] * len(val)
 
-    st.subheader("Summary:",anchor='summary')
+    st.subheader("Results:",anchor='summary')
     st.write(f"* N = {len(df_r)} companies")
 
     if model.rsquared * 100 > 30:
@@ -187,21 +185,20 @@ def main():
 
     st.title('Impact of Growth and Margins on Valuation')
 
-
-    #st.markdown("""**Growth drives revenue multiples** <h1 id="summary">Abc Def</h1>""",unsafe_allow_html=True)
     st.header("TL;DR")
-    """
+
+    st.markdown("""
     
     For high-growth B2B SaaS companies:
-    * **Growth drives revenue multiples** ({: #summary })
+    * [Revenue growth drives revenue multiples](#summary)
         * Higher growth &#8594 Premium revenue multiples
         * Lower growth &#8594 Discounted revenue multiples
         
     
-    * **Gross Margin doesn't impact valuation**
-        * All things being equal, companies with higher gross margins don't command higher revenue multiples
+    * [Gross Margin doesn't impact valuation](#summary)
+        * Companies with higher gross margins don't command higher revenue multiples
         * And conversely, lower gross margins don't seem to pull down revenue multiples
-    """
+    """,unsafe_allow_html=True)
 
     plot_container = st.beta_container()
 
@@ -223,6 +220,7 @@ def main():
         for _, x in zip(range(4), reg_x_cols):
             st.plotly_chart(get_scatter_fig(df, x=x, y=y_sel))
         st.plotly_chart(get_scatter_fig(df, x=gm, y=rev_g))
+
 
     st.subheader("Dataset")
     st.beta_expander('Table Output') \
